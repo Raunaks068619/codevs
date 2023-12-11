@@ -113,7 +113,8 @@ export const getPromptFromMode = (promptType) => {
 };
 
 export const getApiKey = () => {
-  const secret_key = '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' || window.localStorage.getItem("open-api-secret");
-  console.log("MARK", secret_key);
-  return secret_key;
+  const default_key_1 = "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"
+  const secret_key =   window.localStorage.getItem("open-api-secret");
+  
+  return default_key_1;
 };
