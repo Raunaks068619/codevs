@@ -4,6 +4,7 @@ import { getApiKey, getPromptFromMode } from "../../helper/common";
 
 export const runtime = "edge";
 const apiKey = getApiKey();
+
 const configuration = new Configuration({
   apiKey: apiKey,
 });
@@ -15,7 +16,7 @@ const openai = new OpenAIApi(configuration);
 export async function POST(request: Request) {
   // { image: "ASDFASDFASDF base64 string" }
   const { image, prevResponse, exPrompt } = await request.json();
-  const prompt: string = getPromptFromMode("typescript+HTML");
+  const prompt: string = getPromptFromMode("tailwind");
 
   const response = await openai.createChatCompletion({
     model: "gpt-4-vision-preview",

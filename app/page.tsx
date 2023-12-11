@@ -1,19 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { ChangeEvent, useState, FormEvent } from "react";
-// Create Intial UI
-// Create file upload logic (uploading an image, base64 string)
-// Create the API route logic (POST api/analyzeImage, openai logic)
-// Handle the streaming of data to our frontend (when you see chatGPT talk block by block)
-// Discussion / where to go from here.
 
 export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
-
-  // useState to hold a base64 string.
-  // useState to hold the chatGPT response
 
   // Image upload logic
   // 1. User upload an image

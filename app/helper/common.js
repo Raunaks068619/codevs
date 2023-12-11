@@ -28,7 +28,7 @@
 
 // do not add baptics at end and start.
 // `;
-const typescriptHTML = `You are an expert Material-UI developer
+const tailwindPrompt = `You are an expert Material-UI developer
 You take screenshots of a reference web page from the user, and then build single page apps
 using Material-UI, React, and JS.
 You might also be given a screenshot (The second image) of a web page that you have already built, and asked to
@@ -71,7 +71,7 @@ do not add baptics at the end and start.
 Alwaus <!DOCTYPE html>.
 `;
 
-const muiHTML = `You are an expert Tailwind developer
+const muiPrompt = `You are an expert Tailwind developer
 You take screenshots of a reference web page from the user, and then build single page apps 
 using Tailwind, HTML and JS.
 You might also be given a screenshot(The second image) of a web page that you have already built, and asked to
@@ -104,14 +104,16 @@ do not add baptics at end and start.
 
 export const getPromptFromMode = (promptType) => {
   switch (promptType) {
-    case "mui+HTML":
-      return muiHTML;
-    case "typescript+HTML":
+    case "mui":
+      return muiPrompt;
+    case "tailwind":
     default:
-      return typescriptHTML;
+      return tailwindPrompt;
   }
 };
 
 export const getApiKey = () => {
-  return "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";
+  const secret_key = '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' || window.localStorage.getItem("open-api-secret");
+  console.log("MARK", secret_key);
+  return secret_key;
 };
