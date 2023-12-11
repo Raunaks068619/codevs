@@ -1,10 +1,11 @@
 import { Configuration, OpenAIApi } from "openai-edge";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { getPromptFromMode } from "../../helper/common";
-export const runtime = "edge";
+import { getApiKey, getPromptFromMode } from "../../helper/common";
 
+export const runtime = "edge";
+const apiKey = getApiKey();
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: apiKey,
 });
 
 const openai = new OpenAIApi(configuration);
