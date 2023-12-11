@@ -1,10 +1,12 @@
 import { Configuration, OpenAIApi } from "openai-edge";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { getPromptFromMode } from "../../helper/common";
+import { getApiKey, getPromptFromMode } from "../../helper/common";
+
 export const runtime = "edge";
+const apiKey = getApiKey();
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: apiKey,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -14,7 +16,7 @@ const openai = new OpenAIApi(configuration);
 export async function POST(request: Request) {
   // { image: "ASDFASDFASDF base64 string" }
   const { image, prevResponse, exPrompt } = await request.json();
-  const prompt: string = getPromptFromMode("typescript+HTML");
+  const prompt: string = getPromptFromMode("tailwind");
 
   const response = await openai.createChatCompletion({
     model: "gpt-4-vision-preview",
@@ -29,8 +31,8 @@ export async function POST(request: Request) {
         content: [
           exPrompt
             ? {
-              type: "text",
-              text: `${prompt} : ${exPrompt} : ${prevResponse}`,
+                type: "text",
+                text: `${prompt} : ${exPrompt} : ${prevResponse}`,
               }
             : { type: "text", text: prompt },
           {
