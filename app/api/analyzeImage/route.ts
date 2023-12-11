@@ -4,7 +4,7 @@ import { getPromptFromMode } from "../../helper/common";
 export const runtime = "edge";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const openai = new OpenAIApi(configuration);
@@ -29,8 +29,8 @@ export async function POST(request: Request) {
         content: [
           exPrompt
             ? {
-                type: "text",
-                text: `${prompt} : ${exPrompt} : ${prevResponse}`,
+              type: "text",
+              text: `${prompt} : ${exPrompt} : ${prevResponse}`,
               }
             : { type: "text", text: prompt },
           {
