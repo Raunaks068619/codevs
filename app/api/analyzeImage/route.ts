@@ -15,19 +15,16 @@ const openai = new OpenAIApi(configuration);
 // POST api/analyzeImage
 export async function POST(request: Request) {
   // { image: "ASDFASDFASDF base64 string" }
-  const { image, prevResponse, exPrompt } = await request.json();
-  const prompt: string = getPromptFromMode("tailwind");
+  const { image, prevResponse, exPrompt, selectedStyle } = await request.json();
+  const prompt: string = getPromptFromMode(selectedStyle);
 
   const response = await openai.createChatCompletion({
     model: "gpt-4-vision-preview",
     stream: true,
-    max_tokens: 4096, // No max tokens: super short / cut off response.
+    max_tokens: 4096,
     messages: [
-      // GPT-4 with Vision is JUST GPT-4. So you can still talk with it like GPT-4
-      // There is no "system" message (THIS MAY CHANGE)
       {
         role: "user",
-        //@ts-ignore
         content: [
           exPrompt
             ? {

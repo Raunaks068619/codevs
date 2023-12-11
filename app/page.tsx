@@ -7,13 +7,7 @@ export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
-
-  // Image upload logic
-  // 1. User upload an image
-  // 2. We can take the image (all of its data), and convert it into a base64 string
-  // What is a base64 string? It is a string "AJADLSDJAK" that represents an ENTIRE image.
-  // "ENTIRESTRING" -> :)
-  // 3. When we request the API route we create, we will pass the image (string) to the backend.
+  const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files === null) {
@@ -56,6 +50,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         image: image, // base64 image
+        style: selectedStyle,
       }),
     }).then(async (response: any) => {
       // Because we are getting a streaming text response
@@ -122,7 +117,7 @@ export default function Home() {
     <div className="min-h-screen flex items-start justify-center text-md">
      
       <div className="bg-slate-800 w-full max-w-2xl rounded-lg shadow-md p-8">
-       <Dropdown title="Styles" listMap={['one','two']}/>
+        <Dropdown selectedStyle={selectedStyle} setSelectedStyle={setSelectedStyle} />
        
         <h2 className="text-xl font-bold mb-4">Uploaded Image</h2>
         {image !== "" ? (
