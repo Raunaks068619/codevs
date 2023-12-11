@@ -8,7 +8,9 @@ import { ChangeEvent, useState, FormEvent } from "react"
 
 export default function Home() {
   const [ image, setImage ] = useState<string>("");
-  const [ openAIResponse, setOpenAIResponse ] = useState<string>("");
+  const [openAIResponse, setOpenAIResponse] = useState<string>("");
+  const [exPrompt, setExPrompt] = useState<string>("");
+
   // useState to hold a base64 string.
   // useState to hold the chatGPT response
 
@@ -60,7 +62,49 @@ export default function Home() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        image: image // base64 image
+        image: image, // base64 image
+      })
+    })
+    .then(async (response: any) => {
+      // Because we are getting a streaming text response
+      // we have to make some logic to handle the streaming text
+      const reader = response.body?.getReader();
+      setOpenAIResponse("");
+      // reader allows us to read a new piece of info on each "read"
+      // "Hello" + "I am" + "Cooper Codes"  reader.read();
+      while (true) {
+        const { done, value } = await reader?.read();
+        // done is true once the response is done
+        if(done) {
+          break;
+        }
+
+        // value : uint8array -> a string.
+        var currentChunk = new TextDecoder().decode(value);
+        setOpenAIResponse((prev) => prev + currentChunk);
+      }
+    });
+
+  }
+
+  async function handleReSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if(image === "") {
+      alert("Upload an image.")
+      return;
+    }
+
+    // POST api/analyzeImage
+    await fetch("api/analyzeImage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        image: image, // base64 image
+        prevResponse: openAIResponse,
+        exPrompt: exPrompt
       })
     })
     .then(async (response: any) => {
@@ -87,6 +131,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center text-md">
+     
       <div className='bg-slate-800 w-full max-w-2xl rounded-lg shadow-md p-8'>
         <h2 className='text-xl font-bold mb-4'>Uploaded Image</h2>
         { image !== "" ?
@@ -112,11 +157,22 @@ export default function Home() {
               onChange={(e) => handleFileChange(e)}
             />
           </div>
-          
+
+          <div className='flex flex-col mb-6'>
+            <label className='mb-2 text-sm font-medium'>Upload Image</label>
+            <div className="flex gap-2">
+              <input value={exPrompt}
+                style={{color:'black  '}}
+                onChange={(e) => setExPrompt(e.target.value)} type="text" placeholder="Enter your text" className="form-input px-4 py-2 flex-1 border rounded border-gray-300 text-color-black"/>
+              <button className='p-2 bg-sky-600 rounded-md m-auto' onClick={(e) => handleReSubmit(e)}>resubmit</button>
+            </div>
+          </div>
+
           <div className='flex justify-center'>
             <button type="submit" className='p-2 bg-sky-600 rounded-md mb-4'>
               Ask ChatGPT To Analyze Your Image
             </button>
+            
           </div> 
 
         </form>
@@ -124,7 +180,7 @@ export default function Home() {
         {openAIResponse !== "" ?
         <div className="border-t border-gray-300 pt-4">
           <h2 className="text-xl font-bold mb-2">AI Response</h2>
-          <p>{openAIResponse}</p>
+            <p>{openAIResponse.replaceAll("```html", "").replaceAll("```", "")}</p>
         </div>
         :
         null
@@ -132,6 +188,10 @@ export default function Home() {
         
 
       </div>
+     {openAIResponse !== "" && <iframe title="Preview" className="inset-0 w-full h-full bg-white" sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals"
+        srcDoc={`
+        ${openAIResponse.replaceAll("```html", "").replaceAll("```", "")}
+              `}/>}
     </div>
   )
 }
