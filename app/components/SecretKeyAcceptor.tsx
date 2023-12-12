@@ -35,7 +35,14 @@ const SecretKeyAcceptor = () => {
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="apiKey"
             >
-              Enter your API Key:
+              Enter your OpenAPI Key:  <a
+                href="https://platform.openai.com/api-keys"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline ml-1 cursor-pointer"
+  >
+    https://platform.openai.com/api-keys
+  </a>
             </label>
             <input
               type="text"
