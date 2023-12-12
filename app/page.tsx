@@ -2,21 +2,19 @@
 "use client";
 import { ChangeEvent, useState, FormEvent } from "react";
 import Dropdown from "./components/Dropdown";
-import Editor from '@monaco-editor/react';
+import Editor from "@monaco-editor/react";
 import useLoader from "./hooks/useLoader";
 import { getApiKey } from "./helper/common";
 import MyLoader from "./components/MyLoader";
-// import { useRouter } from 'next/router';
 
 export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
-  const [isPromptBeingGenerated, setisPromptBeingGenerated] = useState<boolean>(false);
-  
-  // const { reload } = useRouter()
-  const { showLoader } =useLoader()
+  const [isPromptBeingGenerated, setisPromptBeingGenerated] =
+    useState<boolean>(false);
+  const { showLoader } = useLoader();
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files === null) {
       window.alert("No file selected. Choose a file.");
@@ -44,6 +42,7 @@ export default function Home() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPromptBeingGenerated) return;
 
     if (image === "") {
       alert("Upload an image.");
@@ -51,6 +50,7 @@ export default function Home() {
     }
 
     // POST api/analyzeImage
+    setisPromptBeingGenerated(true);
     await fetch("api/analyzeImage", {
       method: "POST",
       headers: {
@@ -59,35 +59,39 @@ export default function Home() {
       body: JSON.stringify({
         image: image, // base64 image
         style: selectedStyle,
-        apiKey: getApiKey()
+        apiKey: getApiKey(),
       }),
-    }).then(async (response: any) => {
-      showLoader(true);
-      setisPromptBeingGenerated(true)
-      // Because we are getting a streaming text response
-      // we have to make some logic to handle the streaming text
-      const reader = response.body?.getReader();
-      setOpenAIResponse("");
-      // reader allows us to read a new piece of info on each "read"
-      // "Hello" + "I am" + "Cooper Codes"  reader.read();
-      while (true) {
-        const { done, value } = await reader?.read();
-        // done is true once the response is done
-        if (done) {
-          showLoader(false)
-          setisPromptBeingGenerated(false)
-          break;
-        }
+    })
+      .then(async (response: any) => {
+        showLoader(true);
+        // Because we are getting a streaming text response
+        // we have to make some logic to handle the streaming text
+        const reader = response.body?.getReader();
+        setOpenAIResponse("");
+        // reader allows us to read a new piece of info on each "read"
+        // "Hello" + "I am" + "Cooper Codes"  reader.read();
+        while (true) {
+          const { done, value } = await reader?.read();
+          // done is true once the response is done
+          if (done) {
+            showLoader(false);
+            setisPromptBeingGenerated(false);
+            break;
+          }
 
-        // value : uint8array -> a string.
-        var currentChunk = new TextDecoder().decode(value);
-        setOpenAIResponse((prev) => prev + currentChunk);
-      }
-    }).catch(e=>{setisPromptBeingGenerated(false)});
+          // value : uint8array -> a string.
+          var currentChunk = new TextDecoder().decode(value);
+          setOpenAIResponse((prev) => prev + currentChunk);
+        }
+      })
+      .catch((e) => {
+        setisPromptBeingGenerated(false);
+      });
   }
 
   async function handleReSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPromptBeingGenerated) return;
 
     if (image === "") {
       alert("Upload an image.");
@@ -104,7 +108,7 @@ export default function Home() {
         image: image, // base64 image
         prevResponse: openAIResponse,
         exPrompt: exPrompt,
-        apiKey: getApiKey()
+        apiKey: getApiKey(),
       }),
     }).then(async (response: any) => {
       // Because we are getting a streaming text response
@@ -130,19 +134,22 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-start justify-center text-md">
       <div className="bg-slate-800 w-full max-w-2xl rounded-lg shadow-md p-8 ">
-<div className="mb-20">
-      <button
+        <div className="mb-20">
+          <button
             onClick={() => {
               window.localStorage.removeItem("open-ai-secret-key");
               window.location.reload();
             }}
             className="size-sm mt-5 bg-red-500 hover:bg-red-700 text-white font-12 font-bold py-2 px-4 rounded"
-              >
-                Remove Key
-              </button>
-     </div>
-        <Dropdown selectedStyle={selectedStyle} setSelectedStyle={setSelectedStyle} />
-       
+          >
+            Remove Key
+          </button>
+        </div>
+        <Dropdown
+          selectedStyle={selectedStyle}
+          setSelectedStyle={setSelectedStyle}
+        />
+
         <h2 className="text-xl font-bold mb-4">Uploaded Image</h2>
         {image !== "" ? (
           <div className="mb-4 overflow-hidden">
@@ -158,7 +165,12 @@ export default function Home() {
           </div>
         )}
 
-        <form onSubmit={(e) => {handleSubmit(e);setExPrompt('')}}>
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+            setExPrompt("");
+          }}
+        >
           <div className="flex flex-col mb-6">
             <label className="mb-2 text-sm font-medium">Upload Image</label>
             <input
@@ -169,7 +181,9 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col mb-6">
-            <label className="mb-2 text-sm font-medium">Refacotor your code</label>
+            <label className="mb-2 text-sm font-medium">
+              Refacotor your code
+            </label>
             <div className="flex gap-2">
               <input
                 value={exPrompt}
@@ -183,51 +197,64 @@ export default function Home() {
                 className="p-2 bg-sky-600 rounded-md m-auto"
                 onClick={(e: any) => handleReSubmit(e)}
               >
-                {!isPromptBeingGenerated ? 'Proompt' :  <div className=""> <MyLoader/></div> }
+                {!isPromptBeingGenerated ? (
+                  "Proompt"
+                ) : (
+                  <div className="">
+                    <MyLoader />
+                  </div>
+                )}
               </button>
             </div>
           </div>
 
           <div className="flex justify-center">
             <button type="submit" className="p-2 bg-sky-600 rounded-md mb-4">
-              {!isPromptBeingGenerated ? 'Ask ChatGPT To Analyze Your Image' : <div className="w-[300px]"> <MyLoader/></div> }
+              {!isPromptBeingGenerated ? (
+                "Ask ChatGPT To Analyze Your Image"
+              ) : (
+                <div className="mx-[122px]">
+                  <MyLoader />
+                </div>
+              )}
             </button>
           </div>
         </form>
 
         {openAIResponse !== "" ? (
           <div className="border-t border-gray-300 pt-4 h-full">
-            <div className= "flex justify-between items-center select-none">
-             <h2 className="text-xl font-bold mb-2">AI Response</h2>
-             <div
-                  onClick={() => {
-                      navigator.clipboard.writeText(openAIResponse.replaceAll("```html", "").replaceAll("```", ""));
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >COPY</div>
+            <div className="flex justify-between items-center select-none">
+              <h2 className="text-xl font-bold mb-2">AI Response</h2>
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    openAIResponse
+                      .replaceAll("```html", "")
+                      .replaceAll("```", "")
+                  );
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                COPY
+              </div>
             </div>
 
-               
             <Editor
-                    height='100vh'
-                    width="100%"
-                    defaultLanguage='HTML'
-                    language="HTML"
-                    // options={{ fontSize: '14px' }}
-                    theme="vs-dark"
-                    value={openAIResponse.replaceAll("```html", "").replaceAll("```", "")}
-                    // defaultValue
-                    // onChange={() => handleChange(editorRef.current?.getValue())}
-                />
-            {/* <p>
-              {openAIResponse.replaceAll("```html", "").replaceAll("```", "")}
-            </p> */}
+              height="100vh"
+              width="100%"
+              defaultLanguage="HTML"
+              language="HTML"
+              theme="vs-dark"
+              value={openAIResponse
+                .replaceAll("```html", "")
+                .replaceAll("```", "")}
+            />
           </div>
         ) : null}
       </div>
       {openAIResponse !== "" && (
         <iframe
-          style={{height: '100vh'}}
+          style={{ height: "100vh" }}
           title="Preview"
           className="inset-0 w-full bg-white"
           sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals"
