@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 import React, { useState } from 'react'
 
-const Dropdown = ({ selectedStyle , setSelectedStyle}: { selectedStyle: string, setSelectedStyle:(value:string)=>{} }) => {
+const Dropdown = ({ selectedStyle , setSelectedStyle}: { selectedStyle: string, setSelectedStyle:any }) => {
   const [showModal, setShowModal] = useState(false);
   const setModal = (truth:boolean) =>{
       setShowModal(truth)
