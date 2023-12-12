@@ -27,18 +27,17 @@ export async function POST(request: Request) {
     messages: [
       {
         role: "user",
-        content: [
-          exPrompt
-            ? {
-                type: "text",
-                text: `${prompt} : ${exPrompt} : ${prevResponse}`,
-              }
-            : { type: "text", text: prompt },
-          {
-            type: "image_url",
-            image_url: image, // base64 images
-          },
-        ],
+        content: JSON.parse(JSON.stringify(
+          [
+            exPrompt
+              ? `${prompt} : ${exPrompt} : ${prevResponse}`
+              : prompt,
+            {
+              type: "image_url",
+              image_url: image, // base64 images
+            },
+          ],
+        )),
       },
     ],
   });
