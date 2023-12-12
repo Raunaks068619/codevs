@@ -5,7 +5,6 @@ import useLoader from "../hooks/useLoader";
 
 const Loader = () => {
   const { isLoading } = useLoader();
-  console.log("MARK LOADER IS", isLoading);
 
   if (!isLoading) return null;
   // if(true) return null;

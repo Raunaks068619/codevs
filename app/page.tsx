@@ -4,11 +4,15 @@ import { ChangeEvent, useState, FormEvent } from "react";
 import Dropdown from "./components/Dropdown";
 import Editor from '@monaco-editor/react';
 import useLoader from "./hooks/useLoader";
+import { getApiKey } from "./helper/common";
+// import { useRouter } from 'next/router';
+
 export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
+  // const { reload } = useRouter()
   const { showLoader } =useLoader()
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files === null) {
@@ -52,6 +56,7 @@ export default function Home() {
       body: JSON.stringify({
         image: image, // base64 image
         style: selectedStyle,
+        apiKey: getApiKey()
       }),
     }).then(async (response: any) => {
       showLoader(true)
@@ -94,6 +99,7 @@ export default function Home() {
         image: image, // base64 image
         prevResponse: openAIResponse,
         exPrompt: exPrompt,
+        apiKey: getApiKey()
       }),
     }).then(async (response: any) => {
       // Because we are getting a streaming text response
@@ -118,8 +124,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-start justify-center text-md">
-     
-      <div className="bg-slate-800 w-full max-w-2xl rounded-lg shadow-md p-8">
+      <div className="bg-slate-800 w-full max-w-2xl rounded-lg shadow-md p-8 ">
+<div className="mb-20">
+      <button
+            onClick={() => {
+              window.localStorage.removeItem("open-ai-secret-key");
+              window.location.reload();
+            }}
+            className="size-sm mt-5 bg-red-500 hover:bg-red-700 text-white font-12 font-bold py-2 px-4 rounded"
+              >
+                Remove Key
+              </button>
+     </div>
         <Dropdown selectedStyle={selectedStyle} setSelectedStyle={setSelectedStyle} />
        
         <h2 className="text-xl font-bold mb-4">Uploaded Image</h2>

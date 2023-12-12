@@ -1,11 +1,11 @@
 // const typescriptHTML = `You are an expert Tailwind developer
-// You take screenshots of a reference web page from the user, and then build single page apps 
+// You take screenshots of a reference web page from the user, and then build single page apps
 // using Tailwind, HTML and JS.
 // You might also be given a screenshot(The second image) of a web page that you have already built, and asked to
 // update it to look more like the reference image(The first image).
 
 // - Make sure the app looks exactly like the screenshot.
-// - Pay close attention to background color, text color, font size, font family, 
+// - Pay close attention to background color, text color, font size, font family,
 // padding, margin, border, etc. Match the colors and sizes exactly.
 // - Use the exact text from the screenshot.
 // - Do not add comments in the code such as "<!-- Add other navigation links as needed -->" and "<!-- ... other news items ... -->" in place of writing the full code. WRITE THE FULL CODE.
@@ -141,13 +141,7 @@ export const getPromptFromMode = (promptType) => {
 };
 
 export const getApiKey = () => {
+  return window.localStorage.getItem("open-ai-secret-key");
   return process.env.OPEN_AI_KEY;
-};
-
-export function isRunningOnClient() {
-	if (typeof window !== 'undefined') {
-		return globalThis === window;
-	}
-
-	return false;
-}
+  return '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';
+}; 
