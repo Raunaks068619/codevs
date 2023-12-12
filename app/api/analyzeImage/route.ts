@@ -34,7 +34,7 @@ export async function POST(request: Request) {
             : { type: "text", text: prompt },
           {
             type: "image_url",
-            image_url: image, // base64 images
+            image_url: image || '', // base64 images
           },
         ],
       },
