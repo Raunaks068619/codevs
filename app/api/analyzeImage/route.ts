@@ -1,21 +1,23 @@
+// "use client";
 import { Configuration, OpenAIApi } from "openai-edge";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { getApiKey, getPromptFromMode } from "../../helper/common";
 
 export const runtime = "edge";
-const apiKey = getApiKey();
+// const apiKey = getApiKey();
 
-const configuration = new Configuration({
-  apiKey: apiKey,
-});
-
-const openai = new OpenAIApi(configuration);
 
 // Route Handlers let us create API logic
 // POST api/analyzeImage
 export async function POST(request: Request) {
   // { image: "ASDFASDFASDF base64 string" }
-  const { image, prevResponse, exPrompt, style } = await request.json();
+  const { image, prevResponse, exPrompt, style, apiKey } = await request.json();
+
+  const configuration = new Configuration({
+    apiKey: apiKey,
+  });
+
+  const openai = new OpenAIApi(configuration);
   const prompt: string = getPromptFromMode(style);
 
   const response = await openai.createChatCompletion({
