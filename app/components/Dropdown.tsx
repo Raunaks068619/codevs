@@ -32,6 +32,10 @@ const Dropdown = ({ selectedStyle , setSelectedStyle}: { selectedStyle: string, 
             setSelectedStyle('mui')
             setModal(false)
           }} className="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabIndex={1} id="menu-item-1">MUI</a>
+          <a onClick={() => {
+            setSelectedStyle('vanilla')
+            setModal(false)
+          }} className="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabIndex={1} id="menu-item-1">Vanilla</a>
         </div>
       </div>}
   </div>

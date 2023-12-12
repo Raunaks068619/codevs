@@ -145,7 +145,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col mb-6">
-            <label className="mb-2 text-sm font-medium">Upload Image</label>
+            <label className="mb-2 text-sm font-medium">Refacotor your code</label>
             <div className="flex gap-2">
               <input
                 value={exPrompt}
@@ -182,6 +182,7 @@ export default function Home() {
       </div>
       {openAIResponse !== "" && (
         <iframe
+          style={{ height: "100vh" }}
           title="Preview"
           className="inset-0 w-full h-full bg-white"
           sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals"

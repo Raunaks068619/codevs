@@ -15,8 +15,8 @@ const openai = new OpenAIApi(configuration);
 // POST api/analyzeImage
 export async function POST(request: Request) {
   // { image: "ASDFASDFASDF base64 string" }
-  const { image, prevResponse, exPrompt, selectedStyle } = await request.json();
-  const prompt: string = getPromptFromMode(selectedStyle);
+  const { image, prevResponse, exPrompt, style } = await request.json();
+  const prompt: string = getPromptFromMode(style);
 
   const response = await openai.createChatCompletion({
     model: "gpt-4-vision-preview",
