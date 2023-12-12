@@ -1,5 +1,5 @@
 
-"use client";
+
 import React,{ useState, useEffect } from 'react'
 
 function useLoader(){
@@ -10,8 +10,8 @@ function useLoader(){
     }
 
     useEffect(() => {
-      if(isLoading) document.body.style.overflow ='hidden';
-      else document.body.style.overflow ='noset';
+    //   if(isLoading) document.body.style.overflow ='hidden';
+    //   else document.body.style.overflow ='noset';
     }, [isLoading])
     
 

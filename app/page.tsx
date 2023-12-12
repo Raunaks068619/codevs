@@ -3,12 +3,13 @@
 import { ChangeEvent, useState, FormEvent } from "react";
 import Dropdown from "./components/Dropdown";
 import Editor from '@monaco-editor/react';
+import useLoader from "./hooks/useLoader";
 export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
-
+  const { showLoader } =useLoader()
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files === null) {
       window.alert("No file selected. Choose a file.");
@@ -53,6 +54,7 @@ export default function Home() {
         style: selectedStyle,
       }),
     }).then(async (response: any) => {
+      showLoader(true)
       // Because we are getting a streaming text response
       // we have to make some logic to handle the streaming text
       const reader = response.body?.getReader();
@@ -63,6 +65,7 @@ export default function Home() {
         const { done, value } = await reader?.read();
         // done is true once the response is done
         if (done) {
+          showLoader(false)
           break;
         }
 
@@ -134,7 +137,7 @@ export default function Home() {
           </div>
         )}
 
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={(e) => {handleSubmit(e);setExPrompt('')}}>
           <div className="flex flex-col mb-6">
             <label className="mb-2 text-sm font-medium">Upload Image</label>
             <input

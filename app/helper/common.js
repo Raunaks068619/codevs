@@ -141,10 +141,13 @@ export const getPromptFromMode = (promptType) => {
 };
 
 export const getApiKey = () => {
-  const default_key_3 = "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"
-  const default_key_1 = "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"
-  const default_key_2 = "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"
-  // const secret_key =   window.localStorage.getItem("open-api-secret");
-  
-  return default_key_2;
+  return process.env.OPEN_AI_KEY;
 };
+
+export function isRunningOnClient() {
+	if (typeof window !== 'undefined') {
+		return globalThis === window;
+	}
+
+	return false;
+}
