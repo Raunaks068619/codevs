@@ -2,13 +2,14 @@
 "use client";
 import { ChangeEvent, useState, FormEvent } from "react";
 import Dropdown from "./components/Dropdown";
-
+import Editor from '@monaco-editor/react';
+import useLoader from "./hooks/useLoader";
 export default function Home() {
   const [image, setImage] = useState<string>("");
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
-
+  const { showLoader } =useLoader()
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files === null) {
       window.alert("No file selected. Choose a file.");
@@ -53,6 +54,7 @@ export default function Home() {
         style: selectedStyle,
       }),
     }).then(async (response: any) => {
+      showLoader(true)
       // Because we are getting a streaming text response
       // we have to make some logic to handle the streaming text
       const reader = response.body?.getReader();
@@ -63,6 +65,7 @@ export default function Home() {
         const { done, value } = await reader?.read();
         // done is true once the response is done
         if (done) {
+          showLoader(false)
           break;
         }
 
@@ -134,7 +137,7 @@ export default function Home() {
           </div>
         )}
 
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={(e) => {handleSubmit(e);setExPrompt('')}}>
           <div className="flex flex-col mb-6">
             <label className="mb-2 text-sm font-medium">Upload Image</label>
             <input
@@ -172,19 +175,40 @@ export default function Home() {
         </form>
 
         {openAIResponse !== "" ? (
-          <div className="border-t border-gray-300 pt-4">
-            <h2 className="text-xl font-bold mb-2">AI Response</h2>
-            <p>
+          <div className="border-t border-gray-300 pt-4 h-full">
+            <div className= "flex justify-between items-center select-none">
+             <h2 className="text-xl font-bold mb-2">AI Response</h2>
+             <div
+                  onClick={() => {
+                      navigator.clipboard.writeText(openAIResponse.replaceAll("```html", "").replaceAll("```", ""));
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >COPY</div>
+            </div>
+
+               
+            <Editor
+                    height='100vh'
+                    width="100%"
+                    defaultLanguage='HTML'
+                    language="HTML"
+                    // options={{ fontSize: '14px' }}
+                    theme="vs-dark"
+                    value={openAIResponse.replaceAll("```html", "").replaceAll("```", "")}
+                    // defaultValue
+                    // onChange={() => handleChange(editorRef.current?.getValue())}
+                />
+            {/* <p>
               {openAIResponse.replaceAll("```html", "").replaceAll("```", "")}
-            </p>
+            </p> */}
           </div>
         ) : null}
       </div>
       {openAIResponse !== "" && (
         <iframe
-          style={{ height: "100vh" }}
+          style={{height: '100vh'}}
           title="Preview"
-          className="inset-0 w-full h-full bg-white"
+          className="inset-0 w-full bg-white"
           sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals"
           srcDoc={`
         ${openAIResponse.replaceAll("```html", "").replaceAll("```", "")}

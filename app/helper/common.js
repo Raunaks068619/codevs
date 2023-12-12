@@ -141,8 +141,13 @@ export const getPromptFromMode = (promptType) => {
 };
 
 export const getApiKey = () => {
-  const default_key_1 = "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"
-  // const secret_key =   window.localStorage.getItem("open-api-secret");
-  
-  return default_key_1;
+  return process.env.OPEN_AI_KEY;
 };
+
+export function isRunningOnClient() {
+	if (typeof window !== 'undefined') {
+		return globalThis === window;
+	}
+
+	return false;
+}
