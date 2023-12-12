@@ -5,6 +5,7 @@ import Dropdown from "./components/Dropdown";
 import Editor from '@monaco-editor/react';
 import useLoader from "./hooks/useLoader";
 import { getApiKey } from "./helper/common";
+import MyLoader from "./components/MyLoader";
 // import { useRouter } from 'next/router';
 
 export default function Home() {
@@ -12,6 +13,8 @@ export default function Home() {
   const [openAIResponse, setOpenAIResponse] = useState<string>("");
   const [exPrompt, setExPrompt] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("tailwind");
+  const [isPromptBeingGenerated, setisPromptBeingGenerated] = useState<boolean>(false);
+  
   // const { reload } = useRouter()
   const { showLoader } =useLoader()
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -59,7 +62,8 @@ export default function Home() {
         apiKey: getApiKey()
       }),
     }).then(async (response: any) => {
-      showLoader(true)
+      showLoader(true);
+      setisPromptBeingGenerated(true)
       // Because we are getting a streaming text response
       // we have to make some logic to handle the streaming text
       const reader = response.body?.getReader();
@@ -71,6 +75,7 @@ export default function Home() {
         // done is true once the response is done
         if (done) {
           showLoader(false)
+          setisPromptBeingGenerated(false)
           break;
         }
 
@@ -78,7 +83,7 @@ export default function Home() {
         var currentChunk = new TextDecoder().decode(value);
         setOpenAIResponse((prev) => prev + currentChunk);
       }
-    });
+    }).catch(e=>{setisPromptBeingGenerated(false)});
   }
 
   async function handleReSubmit(event: FormEvent<HTMLFormElement>) {
@@ -178,14 +183,14 @@ export default function Home() {
                 className="p-2 bg-sky-600 rounded-md m-auto"
                 onClick={(e: any) => handleReSubmit(e)}
               >
-                resubmit
+                {!isPromptBeingGenerated ? 'Proompt' :  <div className=""> <MyLoader/></div> }
               </button>
             </div>
           </div>
 
           <div className="flex justify-center">
             <button type="submit" className="p-2 bg-sky-600 rounded-md mb-4">
-              Ask ChatGPT To Analyze Your Image
+              {!isPromptBeingGenerated ? 'Ask ChatGPT To Analyze Your Image' : <div className="w-[300px]"> <MyLoader/></div> }
             </button>
           </div>
         </form>
