@@ -42,6 +42,7 @@ export default function Home() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setExPrompt('');
     if (isPromptBeingGenerated) return;
 
     if (image === "") {
@@ -108,6 +109,7 @@ export default function Home() {
         image: image, // base64 image
         prevResponse: openAIResponse,
         exPrompt: exPrompt,
+        style:selectedStyle,
         apiKey: getApiKey(),
       }),
     }).then(async (response: any) => {
