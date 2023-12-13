@@ -200,7 +200,7 @@ export default function Home() {
                 onClick={(e: any) => handleReSubmit(e)}
               >
                 {!isPromptBeingGenerated ? (
-                  "Proompt"
+                  "Prompt"
                 ) : (
                   <div className="">
                     <MyLoader />
