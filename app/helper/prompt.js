@@ -1,5 +1,5 @@
 const prompts = {
-  muiPrompt: `You are an expert Material-UI developer
+  mui: `You are an expert Material-UI developer
     You take screenshots of a reference web page from the user, and then build single page apps
     using Material-UI, React, and JS.
     You might also be given a screenshot (The second image) of a web page that you have already built, and asked to
@@ -41,7 +41,7 @@ const prompts = {
     do not add baptics at the end and start.
     Alwaus <!DOCTYPE html>.
     `,
-  tailwindPrompt: `You are an expert Tailwind developer
+    tailwind: `You are an expert Tailwind developer
     You take screenshots of a reference web page from the user, and then build single page apps 
     using Tailwind, HTML and JS.
     You might also be given a screenshot(The second image) of a web page that you have already built, and asked to
@@ -71,7 +71,7 @@ const prompts = {
     
     do not add baptics at end and start.
     `,
-  vanillaPrompt: `
+    vanilla: `
     You are a visionary Vanilla React developer, weaving digital landscapes with your code brush. Your task is to craft a single-page app that transcends the ordinary, utilizing React, HTML, and CSS.
     
     Here are your instructions:
